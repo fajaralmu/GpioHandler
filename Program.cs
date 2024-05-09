@@ -32,7 +32,10 @@ foreach ( PinHandler handler in appSettings.PinHandlers )
   pins.Add( pin );
 }
 
-IEnumerable<Task> tasks = pins.Select( pin => pin.RunAsync( CancellationToken.None ) );
+Task[] tasks = pins.Select( pin => pin.RunAsync( CancellationToken.None ) ).ToArray();
+
+Console.WriteLine( "Pin tasks: {0}", tasks.Length );
+
 await Task.WhenAll( tasks );
 
 logger.Log( LogLevel.Info, "Stopping GPIO Handler" );
