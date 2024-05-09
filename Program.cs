@@ -8,13 +8,19 @@ using NLog;
 using NLog.Extensions.Logging;
 using GpioPin = GpioHandler.Pin.GpioPin;
 
+System.Console.WriteLine("Starting....");
+
 Logger logger = ConfigureNLog( "nlog.config" ).GetCurrentClassLogger();
 DefaultLogger.SetLoggerFactory( new NLogLoggerFactory() );
+
+System.Console.WriteLine("Logger has been set");
 
 IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile( "appsettings.json", optional: false).Build();
 
 AppConfig appSettings = new AppConfig();
 config.GetSection( nameof( AppConfig ) ).Bind( appSettings );
+
+System.Console.WriteLine("Config has been setup");
 
 logger.Log( LogLevel.Info, "Starting GPIO Handler" );
 
