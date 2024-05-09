@@ -3,22 +3,22 @@ using Microsoft.Extensions.Logging;
 
 namespace GpioHandler.Pin;
 
-internal class GpioPin : IGpioPin
+internal class GpioPushButton : IPushButton
 {
   private readonly int _number;
   private readonly PinMode _mode;
 
   private readonly ILogger _logger;
 
-  public GpioPin( int number, PinMode mode )
+  public GpioPushButton( int number, PinMode mode )
   {
     _number = number;
     _mode = mode;
 
-    _logger = DefaultLogger.CreateNamed( $"{nameof( GpioPin )} #{_number}" );
+    _logger = DefaultLogger.CreateNamed( $"{nameof( GpioPushButton )} #{_number}" );
   }
 
-  public event EventHandler<bool>? OnChange;
+  public event EventHandler? OnChange;
   
   public void Initialize()
   {
@@ -41,8 +41,6 @@ internal class GpioPin : IGpioPin
     PinValue ret = controller.Read( _number );
     return ret == PinValue.High ? 1 : 0;
   }
-
-  private bool _isOn = false;
 
   public async Task RunAsync( CancellationToken token )
   {
@@ -67,20 +65,11 @@ internal class GpioPin : IGpioPin
       OnChangeInternal();
     }
     
-    OnChange?.Invoke( this, false );
-  }
-
-  public void TriggerInternal()
-  {
-    if( _isOn )
-    {
-      OnChangeInternal();
-    }
+    OnChange?.Invoke( this, EventArgs.Empty );
   }
 
   private void OnChangeInternal()
   {
-    _isOn = !_isOn;
-    OnChange?.Invoke( this, _isOn );
+    OnChange?.Invoke( this, EventArgs.Empty );
   }
 }
